@@ -7,6 +7,7 @@ import os
 import sys
 import subprocess
 import shutil
+import json
 from pathlib import Path
 
 def check_python():
@@ -26,35 +27,38 @@ def install_requirements():
         print("❌ Failed to install requirements")
         sys.exit(1)
 
-def setup_redis():
-    """Setup Redis"""
-    print("🔧 Setting up Redis...")
+def setup_storage():
+    """Setup data storage"""
+    print("🔧 Setting up data storage...")
     
-    # Check if Redis is installed
-    if shutil.which("redis-server"):
-        print("✅ Redis server found")
-        
-        # Try to start Redis
-        if shutil.which("systemctl"):
-            try:
-                subprocess.run(["systemctl", "is-active", "redis"], check=True, capture_output=True)
-                print("✅ Redis is already running")
-            except subprocess.CalledProcessError:
-                print("🔄 Starting Redis...")
-                try:
-                    subprocess.run(["sudo", "systemctl", "start", "redis"], check=True)
-                    print("✅ Redis started")
-                except subprocess.CalledProcessError:
-                    print("⚠️  Failed to start Redis, please start it manually")
-        else:
-            print("ℹ️  Please make sure Redis is running")
+    # Create data directory
+    data_dir = Path("data")
+    data_dir.mkdir(exist_ok=True)
+    
+    # Create data file if it doesn't exist
+    data_file = data_dir / "bot_data.json"
+    if not data_file.exists():
+        initial_data = {
+            'users': {},
+            'banned': {},
+            'gbanned': [],
+            'whitelist': [],
+            'chat_users': {},
+            'user_msgs': {},
+            'spam_count': {},
+            'chat_settings': {},
+            'help_texts': {},
+            'languages': {},
+            'bot_settings': {},
+            'user_chat_msgs': {}
+        }
+        with open(data_file, 'w', encoding='utf-8') as f:
+            json.dump(initial_data, f, indent=2)
+        print("✅ Created initial data file")
     else:
-        print("❌ Redis server not found")
-        print("Please install Redis:")
-        print("  Ubuntu/Debian: sudo apt install redis-server")
-        print("  CentOS/RHEL: sudo yum install redis")
-        print("  macOS: brew install redis")
-        print("  Docker: docker run -d -p 6379:6379 redis:alpine")
+        print("✅ Data file already exists")
+    
+    print("✅ File-based storage ready")
 
 def create_config():
     """Create configuration files"""
@@ -133,7 +137,7 @@ def main():
     
     check_python()
     install_requirements()
-    setup_redis()
+    setup_storage()
     create_config()
     
     # Ask about systemd service

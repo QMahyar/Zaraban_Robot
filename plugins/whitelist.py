@@ -61,11 +61,8 @@ async def handle_whitelisted(client, event, args, db):
         return "You don't have permission to view whitelist!"
     
     # Get whitelist from database
-    # Note: Redis SMEMBERS returns all members of a set
-    import redis
     try:
-        whitelist_key = "whitelist"
-        whitelisted_users = db.redis.smembers(whitelist_key)
+        whitelisted_users = db.get_whitelist()
         
         if not whitelisted_users:
             return "📝 Whitelist is empty"
@@ -74,7 +71,6 @@ async def handle_whitelisted(client, event, args, db):
         
         for user_id in whitelisted_users:
             try:
-                user_id = int(user_id)
                 user_data = db.get_user(user_id)
                 
                 if user_data and 'print_name' in user_data:
@@ -108,10 +104,9 @@ async def handle_cleanwhitelist(client, event, args, db):
         return "Only sudo users can clean the whitelist!"
     
     try:
-        # Clear the whitelist set in Redis
-        whitelist_key = "whitelist"
-        count = db.redis.scard(whitelist_key)  # Get count before clearing
-        db.redis.delete(whitelist_key)
+        # Get count before clearing
+        count = len(db.get_whitelist())
+        db.clear_whitelist()
         
         return f"🗑️ Whitelist cleaned! Removed {count} users from whitelist."
         

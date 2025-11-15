@@ -117,12 +117,25 @@ async def handle_stats(client, event, args, db):
         
         # Database stats
         try:
-            # Get some Redis stats
-            info = db.redis.info()
-            stats_text += f"**Database:**\n"
-            stats_text += f"Used Memory: {info.get('used_memory_human', 'N/A')}\n"
-            stats_text += f"Connected Clients: {info.get('connected_clients', 'N/A')}\n"
-            stats_text += f"Commands Processed: {info.get('total_commands_processed', 'N/A')}\n"
+            # Get file-based database stats
+            import os
+            from config import DATA_FILE
+            if os.path.exists(DATA_FILE):
+                file_size = os.path.getsize(DATA_FILE)
+                stats_text += f"**Database:**\n"
+                stats_text += f"Database Size: {file_size / 1024:.1f} KB\n"
+                stats_text += f"Storage Type: File-based JSON\n"
+                
+                # Count data entries
+                total_users = len(db.data.get('users', {}))
+                total_bans = len(db.data.get('banned', {}))
+                total_gbans = len(db.data.get('gbanned', []))
+                total_whitelist = len(db.data.get('whitelist', []))
+                
+                stats_text += f"Users: {total_users}\n"
+                stats_text += f"Local Bans: {total_bans}\n" 
+                stats_text += f"Global Bans: {total_gbans}\n"
+                stats_text += f"Whitelisted: {total_whitelist}\n"
         except:
             pass
         

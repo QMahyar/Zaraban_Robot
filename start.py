@@ -34,7 +34,6 @@ def check_requirements():
     """Check if all required modules are available"""
     required_modules = [
         'telethon',
-        'redis',
         'aiohttp',
         'python-dotenv'
     ]
@@ -70,15 +69,16 @@ def check_config():
         print("Get a bot token from @BotFather on Telegram")
         sys.exit(1)
 
-def check_redis():
-    """Check Redis connection"""
+def check_storage():
+    """Check data storage"""
     try:
         from database import db
-        db.redis.ping()
-        print("✅ Redis connection successful")
+        # Test database operations
+        test_data = db._load_data()
+        print("✅ File-based storage ready")
     except Exception as e:
-        print(f"❌ Redis connection failed: {e}")
-        print("Make sure Redis is running and configured correctly")
+        print(f"❌ Storage initialization failed: {e}")
+        print("Check data directory permissions")
         sys.exit(1)
 
 def create_system_files():
@@ -112,8 +112,8 @@ async def main():
     print("⚙️  Checking configuration...")
     check_config()
     
-    print("🔌 Checking Redis connection...")
-    check_redis()
+    print("🔌 Checking data storage...")
+    check_storage()
     
     print("📁 Creating system files...")
     create_system_files()

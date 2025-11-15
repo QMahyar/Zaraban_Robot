@@ -2,10 +2,10 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
 [![Telethon](https://img.shields.io/badge/telethon-1.28%2B-green.svg)](https://github.com/LonamiWebs/Telethon)
-[![Redis](https://img.shields.io/badge/redis-4.5%2B-red.svg)](https://redis.io)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![No Dependencies](https://img.shields.io/badge/dependencies-minimal-brightgreen.svg)](requirements.txt)
 
-A powerful, modern Telegram group moderation bot built with Python and Telethon. Originally migrated from a legacy telegram-cli/Lua implementation, this bot provides comprehensive anti-spam protection, user management, and administrative tools for Telegram groups and channels.
+A powerful, self-contained Telegram group moderation bot built with Python and Telethon. Completely independent with **zero external dependencies** - no Redis, no databases, just pure Python! Originally migrated from a legacy telegram-cli/Lua implementation, this bot provides comprehensive anti-spam protection, user management, and administrative tools for Telegram groups and channels.
 
 ## 🌟 What This Bot Does
 
@@ -60,7 +60,7 @@ A powerful, modern Telegram group moderation bot built with Python and Telethon.
 ### New Improvements
 - **Modern Python** - Built with Telethon, the most advanced Telegram library
 - **Async/Await** - Fully asynchronous for better performance
-- **Redis Database** - Efficient data storage and retrieval
+- **File-based Storage** - Simple, reliable JSON data storage
 - **Plugin System** - Modular design for easy customization
 - **Better Logging** - Comprehensive logging and error tracking
 - **Configuration** - Easy environment-based configuration
@@ -82,8 +82,9 @@ python3 setup.py
 
 #### Prerequisites
 - **Python 3.8+** - [Download here](https://python.org/downloads)
-- **Redis Server** - [Installation guide](https://redis.io/download)
 - **Telegram API Credentials** - [Get from my.telegram.org](https://my.telegram.org)
+
+**That's it!** No Redis, no databases, no external services needed! 🎉
 
 #### Step-by-Step Setup
 
@@ -111,28 +112,11 @@ API_ID=1234567
 API_HASH=abcdef1234567890abcdef1234567890
 BOT_TOKEN=1234567890:ABCdefGHIjklMNOpqrSTUvwxyz
 SUDO_USERS=123456789,987654321
-REDIS_HOST=localhost
-REDIS_PORT=6379
+DATA_FILE=data/bot_data.json
 FLOOD_LIMIT=5
 ```
 
-4. **Start Redis Server**
-```bash
-# Ubuntu/Debian
-sudo systemctl start redis-server
-sudo systemctl enable redis-server
-
-# macOS with Homebrew
-brew services start redis
-
-# Docker
-docker run -d --name redis -p 6379:6379 redis:alpine
-
-# Windows (with Redis installed)
-redis-server
-```
-
-5. **Launch the Bot**
+4. **Launch the Bot**
 ```bash
 python3 start.py
 ```
@@ -275,39 +259,23 @@ This bot maintains compatibility with the original Lua-based bot:
 git clone https://github.com/yourusername/telegram-moderation-bot.git
 cd telegram-moderation-bot
 
-# Create docker-compose.yml
-cat > docker-compose.yml << EOF
-version: '3.8'
-services:
-  redis:
-    image: redis:alpine
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-  
-  telegram-bot:
-    build: .
-    restart: unless-stopped
-    depends_on:
-      - redis
-    env_file:
-      - .env
-    environment:
-      - REDIS_HOST=redis
-EOF
+# Create Dockerfile (already included)
+docker build -t telegram-bot .
 
-# Start services
-docker-compose up -d
+# Run container
+docker run -d --name telegram-bot \
+  --env-file .env \
+  -v $(pwd)/data:/app/data \
+  telegram-bot
 ```
 
 ### ☁️ **Cloud Deployment**
 
-#### Heroku
+#### Heroku (No Redis needed!)
 ```bash
 # Install Heroku CLI and login
 heroku create your-bot-name
-heroku addons:create heroku-redis:hobby-dev
-heroku config:set API_ID=your_api_id API_HASH=your_api_hash BOT_TOKEN=your_bot_token
+heroku config:set API_ID=your_api_id API_HASH=your_api_hash BOT_TOKEN=your_bot_token SUDO_USERS=your_user_id
 git push heroku main
 ```
 
@@ -331,9 +299,8 @@ BOT_TOKEN=123:ABC-DEF123                # From @BotFather
 SUDO_USERS=123456789,987654321          # Comma-separated admin IDs
 
 # Optional
-REDIS_HOST=localhost                    # Redis server address
-REDIS_PORT=6379                         # Redis server port
-REDIS_PASSWORD=                         # Redis password (if any)
+DATA_FILE=data/bot_data.json           # Database file path
+BOT_SESSION_NAME=telegram_bot          # Session name for Telethon
 FLOOD_LIMIT=5                          # Default flood protection limit
 GBAN_LIMIT=4                           # Global ban threshold
 ```
@@ -352,7 +319,7 @@ GBAN_LIMIT=4                           # Global ban threshold
 | Problem | Solution |
 |---------|----------|
 | **Bot doesn't respond** | • Check bot token in `.env`<br>• Ensure bot is admin in group<br>• Verify bot permissions |
-| **Redis connection failed** | • Start Redis: `sudo systemctl start redis`<br>• Check Redis settings in `.env`<br>• Test: `redis-cli ping` |
+| **Data not saving** | • Check `data/` directory exists<br>• Verify file permissions<br>• Check disk space |
 | **Permission denied errors** | • Give bot admin rights<br>• Enable "Delete messages" permission<br>• Enable "Ban users" permission |
 | **Flood detection not working** | • Check `/settings` for flood status<br>• Use `/setflood <number>` to configure<br>• Ensure bot is admin |
 | **Global ban not working** | • Only sudo users can global ban<br>• Check `SUDO_USERS` in `.env`<br>• Restart bot after config changes |
@@ -371,34 +338,34 @@ tail -f bot.log
 
 ### **From Original Lua Bot**
 ```bash
-# Use the migration tool
+# Use the migration tool (no Redis needed!)
 python3 migrate.py backup      # Backup current data
-python3 migrate.py migrate     # Import old data
+python3 migrate.py migrate     # Import old data to JSON
 ```
 
 ### **From Other Python Bots**
 1. Export user data (bans, settings)
-2. Convert to Redis format
+2. Convert to JSON format
 3. Import using migration script
 
 ## 📈 Production Tips
 
 ### **Performance Optimization**
-- Use Redis with persistence enabled
-- Set up log rotation
-- Monitor memory usage
+- Regularly backup the `data/bot_data.json` file
+- Set up log rotation for `bot.log`
+- Monitor memory usage and file size
 - Use process managers (systemd/supervisor)
 
 ### **Security Best Practices**
 - Keep credentials in `.env` file only
-- Use strong Redis password
-- Regular backups of Redis data
+- Secure the `data/` directory with proper permissions
+- Regular backups of data file
 - Monitor bot logs for suspicious activity
 
 ### **Scaling**
-- Use Redis Cluster for multiple bot instances
-- Load balance across multiple servers
-- Database sharding for large deployments
+- For multiple bot instances, use separate data files
+- Load balance with shared network storage
+- Consider database migration for high-load scenarios
 
 ## 🤝 Contributing
 
@@ -460,7 +427,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Original Developers** - Foundation and core concepts
 - **[Telethon](https://github.com/LonamiWebs/Telethon)** - Modern Telegram library
-- **[Redis](https://redis.io)** - High-performance database
+- **Pure Python** - No external database dependencies
 - **Community Contributors** - Bug reports, feature requests, and improvements
 
 ## 📞 Support & Community

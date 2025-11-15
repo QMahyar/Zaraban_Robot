@@ -9,11 +9,8 @@ API_ID = int(os.getenv('API_ID', '0'))
 API_HASH = os.getenv('API_HASH', '')
 BOT_TOKEN = os.getenv('BOT_TOKEN', '')
 
-# Redis configuration
-REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
-REDIS_PORT = int(os.getenv('REDIS_PORT', '6379'))
-REDIS_DB = int(os.getenv('REDIS_DB', '0'))
-REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', None)
+# Data storage configuration (file-based)
+DATA_FILE = os.getenv('DATA_FILE', 'data/bot_data.json')
 
 # Bot configuration
 BOT_SESSION_NAME = os.getenv('BOT_SESSION_NAME', 'telegram_bot')
