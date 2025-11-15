@@ -25,15 +25,20 @@ logger = logging.getLogger(__name__)
 
 class TelegramBot:
     def __init__(self):
-        self.client = TelegramClient(BOT_SESSION_NAME, API_ID, API_HASH)
+        # Telegram client will be created once an event loop is running
+        self.client: TelegramClient | None = None
         self.plugins: Dict[str, Any] = {}
         self.command_handlers: Dict[str, Callable] = {}
         self.pattern_handlers: List[tuple] = []
         self.pre_processors: List[Callable] = []
         self.started = False
-        
+
     async def start(self):
         """Start the bot"""
+        # Create the Telegram client bound to the current running event loop
+        loop = asyncio.get_running_loop()
+        self.client = TelegramClient(BOT_SESSION_NAME, API_ID, API_HASH, loop=loop)
+
         await self.client.start(bot_token=BOT_TOKEN)
         self.started = True
         
@@ -270,10 +275,10 @@ class TelegramBot:
         await self.start()
         await self.client.run_until_disconnected()
 
-# Create global bot instance
-bot = TelegramBot()
 
 if __name__ == '__main__':
+    # Create global bot instance
+    bot = TelegramBot()
     try:
         asyncio.run(bot.run())
     except KeyboardInterrupt:

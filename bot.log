@@ -1,0 +1,22 @@
+2025-11-16 02:54:59,063 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.51:443/TcpFull...
+2025-11-16 02:55:00,682 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.51:443/TcpFull complete!
+2025-11-16 02:55:01,718 - telethon.client.users - INFO - Phone migrated to 4
+2025-11-16 02:55:01,718 - telethon.client.telegrambaseclient - INFO - Reconnecting to new data center 4
+2025-11-16 02:55:01,867 - telethon.network.mtprotosender - INFO - Disconnecting from 149.154.167.51:443/TcpFull...
+2025-11-16 02:55:01,868 - telethon.network.mtprotosender - INFO - Disconnection from 149.154.167.51:443/TcpFull complete!
+2025-11-16 02:55:01,868 - telethon.network.mtprotosender - INFO - Connecting to 149.154.167.92:443/TcpFull...
+2025-11-16 02:55:03,607 - telethon.network.mtprotosender - INFO - Connection to 149.154.167.92:443/TcpFull complete!
+2025-11-16 02:55:04,735 - __main__ - INFO - Bot started as @Spam_q_Bot
+2025-11-16 02:55:04,740 - __main__ - INFO - Loaded plugin: anti_spam
+2025-11-16 02:55:04,745 - __main__ - INFO - Loaded plugin: banhammer
+2025-11-16 02:55:04,748 - __main__ - INFO - Loaded plugin: help
+2025-11-16 02:55:04,752 - __main__ - INFO - Loaded plugin: info
+2025-11-16 02:55:04,755 - __main__ - INFO - Loaded plugin: settings
+2025-11-16 02:55:04,758 - __main__ - INFO - Loaded plugin: sudo
+2025-11-16 02:55:04,761 - __main__ - INFO - Loaded plugin: whitelist
+2025-11-16 02:55:04,761 - __main__ - INFO - Bot is ready!
+2025-11-16 02:59:24,882 - __main__ - ERROR - Error processing chat action: 'UpdateChannelParticipant' object has no attribute 'peer_id'
+2025-11-16 02:59:24,985 - __main__ - ERROR - Error processing chat action: 'UpdateNewChannelMessage' object has no attribute 'peer_id'
+2025-11-16 03:01:32,048 - telethon.network.mtprotosender - INFO - Disconnecting from 149.154.167.92:443/TcpFull...
+2025-11-16 03:01:32,049 - telethon.network.mtprotosender - INFO - Disconnection from 149.154.167.92:443/TcpFull complete!
+2025-11-16 03:01:32,055 - __main__ - INFO - Bot stopped by user

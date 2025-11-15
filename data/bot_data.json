@@ -1,0 +1,28 @@
+{
+  "users": {
+    "211492300": {
+      "id": "211492300",
+      "first_name": "Mahyar",
+      "last_name": null,
+      "username": "QMahyar",
+      "print_name": "Mahyar"
+    }
+  },
+  "banned": {},
+  "gbanned": [],
+  "whitelist": [],
+  "chat_users": {
+    "PM:211492300": [
+      211492300
+    ]
+  },
+  "user_msgs": {},
+  "spam_count": {},
+  "chat_settings": {},
+  "help_texts": {},
+  "languages": {},
+  "bot_settings": {},
+  "user_chat_msgs": {
+    "211492300:211492300": 2
+  }
+}
